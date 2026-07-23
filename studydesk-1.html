@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>StudyDesk — All-in-one for Students & Office Work</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#F3F1FB;
+    --card:#FFFFFF;
+    --violet:#5B4FE9;
+    --violet-dark:#4438C2;
+    --amber:#E0A23B;
+    --ink:#242236;
+    --ink-soft:#6E6A85;
+    --line:#E4E1F3;
+    --danger:#B3452F;
+    --danger-bg:#FBEAE5;
+    --radius:18px;
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:'Inter',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+  .app{max-width:480px;margin:0 auto;padding:0 0 90px 0;min-height:100vh;position:relative;}
+  header{padding:26px 22px 16px 22px;display:flex;align-items:center;gap:13px;}
+  .logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,var(--violet),var(--violet-dark));display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .logo svg{width:23px;height:23px;}
+  header h1{font-family:'Space Grotesk',sans-serif;font-size:21px;margin:0;letter-spacing:-0.02em;}
+  header p{margin:2px 0 0 0;font-size:12.5px;color:var(--ink-soft);}
+  .settings-btn{margin-left:auto;width:38px;height:38px;border-radius:12px;border:1px solid var(--line);background:var(--card);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+  .settings-btn svg{width:18px;height:18px;stroke:var(--ink-soft);}
+  main{padding:6px 20px 0 20px;}
+  .card{background:var(--card);border-radius:var(--radius);padding:20px 20px;margin-bottom:16px;box-shadow:0 2px 10px rgba(91,79,233,0.06);}
+  .section-title{font-family:'Space Grotesk',sans-serif;font-size:13.5px;color:var(--ink-soft);margin:20px 0 10px 2px;text-transform:uppercase;letter-spacing:0.04em;}
+
+  /* Tasks */
+  .task-add-row{display:flex;gap:8px;margin-bottom:14px;}
+  .task-add-row input{flex:1;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);font-family:'Inter',sans-serif;font-size:14px;}
+  .task-add-row button{width:44px;border:none;border-radius:11px;background:var(--violet);color:#fff;font-size:20px;cursor:pointer;}
+  .task-item{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--line);}
+  .task-item:last-child{border-bottom:none;}
+  .task-check{width:22px;height:22px;border-radius:7px;border:2px solid var(--line);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+  .task-check.done{background:var(--violet);border-color:var(--violet);}
+  .task-check svg{width:13px;height:13px;stroke:#fff;display:none;}
+  .task-check.done svg{display:block;}
+  .task-text{flex:1;font-size:14.5px;}
+  .task-text.done{text-decoration:line-through;color:var(--ink-soft);}
+  .task-del{color:var(--ink-soft);cursor:pointer;font-size:18px;padding:0 4px;}
+  .empty-state{text-align:center;color:var(--ink-soft);font-size:13.5px;padding:14px 0;}
+
+  /* Notes */
+  textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:14px;font-family:'Inter',sans-serif;font-size:14px;resize:vertical;min-height:120px;}
+  .save-note-btn{margin-top:10px;width:100%;padding:12px;border:none;border-radius:11px;background:var(--ink);color:#fff;font-weight:600;font-size:14px;cursor:pointer;}
+  .note-item{padding:12px 0;border-bottom:1px solid var(--line);font-size:13.5px;}
+  .note-item:last-child{border-bottom:none;}
+  .note-date{color:var(--ink-soft);font-size:11.5px;margin-bottom:4px;}
+
+  /* Timer */
+  .timer-display{text-align:center;font-family:'Space Grotesk',sans-serif;font-size:52px;font-weight:700;margin:6px 0 16px 0;color:var(--violet-dark);}
+  .timer-controls{display:flex;gap:10px;}
+  .timer-controls button{flex:1;padding:13px;border:none;border-radius:11px;font-weight:600;font-size:14px;cursor:pointer;}
+  .btn-start{background:var(--violet);color:#fff;}
+  .btn-reset{background:#F1F0FA;color:var(--ink-soft);}
+  .timer-modes{display:flex;gap:8px;margin-bottom:16px;}
+  .timer-mode{flex:1;padding:9px 0;border-radius:10px;border:1.5px solid var(--line);background:#FAFAFE;text-align:center;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+  .timer-mode.active{background:#EFECFC;border-color:var(--violet);color:var(--violet-dark);}
+
+  /* AI Assistant */
+  .ai-modes{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .ai-mode{padding:9px 14px;border-radius:20px;border:1.5px solid var(--line);background:#FAFAFE;font-size:12.5px;font-weight:600;color:var(--ink-soft);cursor:pointer;}
+  .ai-mode.active{background:var(--violet);border-color:var(--violet);color:#fff;}
+  .ai-btn{width:100%;padding:15px;border:none;border-radius:13px;background:linear-gradient(135deg,var(--violet),var(--violet-dark));color:#fff;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:15.5px;display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;margin-top:12px;}
+  .ai-btn:disabled{opacity:0.6;cursor:default;}
+  .ai-btn svg{width:18px;height:18px;}
+  .spin{animation:spin 1s linear infinite;}
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .ai-response{background:#F3F1FB;border:1px solid #DCD7F5;border-radius:14px;padding:17px 19px;margin-top:14px;font-size:14px;line-height:1.55;white-space:pre-wrap;}
+  .ai-response .tag{display:block;font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:11.5px;color:var(--violet-dark);margin-bottom:8px;letter-spacing:0.03em;text-transform:uppercase;}
+  .ai-error{background:var(--danger-bg);border:1px solid #F0CFC2;border-radius:14px;padding:16px 18px;margin-top:14px;font-size:13.5px;color:var(--danger);line-height:1.5;}
+  .ai-error b{display:block;margin-bottom:4px;}
+
+  nav.tabbar{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);display:flex;max-width:480px;margin:0 auto;}
+  nav.tabbar button{flex:1;border:none;background:none;padding:11px 0 9px 0;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--ink-soft);font-family:'Inter',sans-serif;font-size:10.5px;font-weight:600;cursor:pointer;}
+  nav.tabbar button svg{width:19px;height:19px;}
+  nav.tabbar button.active{color:var(--violet);}
+
+  .modal-overlay{position:fixed;inset:0;background:rgba(30,25,50,0.45);display:none;align-items:center;justify-content:center;z-index:50;padding:24px;}
+  .modal-overlay.open{display:flex;}
+  .modal{background:#fff;border-radius:18px;padding:26px 24px;width:100%;max-width:380px;}
+  .modal h2{font-family:'Space Grotesk',sans-serif;font-size:18px;margin:0 0 8px 0;}
+  .modal p{font-size:13.5px;color:var(--ink-soft);line-height:1.5;margin:0 0 16px 0;}
+  .modal input[type=text]{width:100%;padding:12px 14px;border-radius:10px;border:1.5px solid var(--line);font-family:'Inter',sans-serif;font-size:14px;margin-bottom:14px;}
+  .modal a{color:var(--violet);font-weight:600;text-decoration:none;}
+  .modal-actions{display:flex;gap:10px;}
+  .modal-actions button{flex:1;padding:12px;border-radius:10px;border:none;font-family:'Inter',sans-serif;font-weight:600;font-size:14px;cursor:pointer;}
+  .btn-primary{background:var(--violet);color:#fff;}
+  .btn-secondary{background:#F1F0FA;color:var(--ink-soft);}
+
+  .view{display:none;}
+  .view.active{display:block;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+    <div>
+      <h1>StudyDesk</h1>
+      <p>Tasks, notes, focus & AI — all in one</p>
+    </div>
+    <div class="settings-btn" onclick="openSettings()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </div>
+  </header>
+
+  <main>
+    <!-- TASKS VIEW -->
+    <div class="view active" id="view-tasks">
+      <div class="section-title">Add a task</div>
+      <div class="card">
+        <div class="task-add-row">
+          <input type="text" id="taskInput" placeholder="e.g. Finish chapter 4 notes">
+          <button onclick="addTask()">+</button>
+        </div>
+      </div>
+      <div class="section-title">Your tasks</div>
+      <div class="card" id="taskList">
+        <div class="empty-state">No tasks yet — add your first one above.</div>
+      </div>
+    </div>
+
+    <!-- NOTES VIEW -->
+    <div class="view" id="view-notes">
+      <div class="section-title">Quick note</div>
+      <div class="card">
+        <textarea id="noteInput" placeholder="Jot down lecture notes, meeting points, ideas..."></textarea>
+        <button class="save-note-btn" onclick="saveNote()">Save note</button>
+      </div>
+      <div class="section-title">Saved notes</div>
+      <div class="card" id="noteList">
+        <div class="empty-state">No notes yet.</div>
+      </div>
+    </div>
+
+    <!-- FOCUS VIEW -->
+    <div class="view" id="view-focus">
+      <div class="card">
+        <div class="timer-modes">
+          <div class="timer-mode active" data-min="25" onclick="setTimerMode(25,this)">Focus 25m</div>
+          <div class="timer-mode" data-min="5" onclick="setTimerMode(5,this)">Break 5m</div>
+          <div class="timer-mode" data-min="15" onclick="setTimerMode(15,this)">Break 15m</div>
+        </div>
+        <div class="timer-display" id="timerDisplay">25:00</div>
+        <div class="timer-controls">
+          <button class="btn-start" id="timerStartBtn" onclick="toggleTimer()">Start</button>
+          <button class="btn-reset" onclick="resetTimer()">Reset</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- AI VIEW -->
+    <div class="view" id="view-ai">
+      <div class="section-title">What do you need help with?</div>
+      <div class="card">
+        <div class="ai-modes">
+          <div class="ai-mode active" data-mode="Summarize" onclick="setAiMode('Summarize',this)">Summarize</div>
+          <div class="ai-mode" data-mode="To-do list" onclick="setAiMode('To-do list',this)">To-do list</div>
+          <div class="ai-mode" data-mode="Draft email" onclick="setAiMode('Draft email',this)">Draft email</div>
+          <div class="ai-mode" data-mode="Explain simply" onclick="setAiMode('Explain simply',this)">Explain simply</div>
+        </div>
+        <textarea id="aiInput" placeholder="Paste your notes, meeting points, or what you want an email about..."></textarea>
+        <button class="ai-btn" id="aiBtn" onclick="askAI()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/></svg>
+          Ask AI Assistant
+        </button>
+        <div id="aiOutput"></div>
+      </div>
+    </div>
+  </main>
+
+  <nav class="tabbar">
+    <button class="active" data-view="tasks" onclick="switchView('tasks')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Tasks
+    </button>
+    <button data-view="notes" onclick="switchView('notes')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Notes
+    </button>
+    <button data-view="focus" onclick="switchView('focus')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Focus
+    </button>
+    <button data-view="ai" onclick="switchView('ai')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/></svg>
+      AI
+    </button>
+  </nav>
+</div>
+
+<!-- SETTINGS MODAL -->
+<div class="modal-overlay" id="settingsModal">
+  <div class="modal">
+    <h2>AI Assistant setup</h2>
+    <p>Paste your free Groq API key below. It's stored only on this device (sent directly to Groq, never to any other server), so it's safe and never included in the app's code.<br><br>Get a free key at <a href="https://console.groq.com/keys" target="_blank">console.groq.com/keys</a></p>
+    <input type="text" id="apiKeyInput" placeholder="gsk_...">
+    <div class="modal-actions">
+      <button class="btn-secondary" onclick="closeSettings()">Cancel</button>
+      <button class="btn-primary" onclick="saveApiKey()">Save key</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ---------- Utilities ----------
+function loadJSON(key, fallback){ try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; }catch(e){ return fallback; } }
+function saveJSON(key, val){ localStorage.setItem(key, JSON.stringify(val)); }
+function uid(){ return Date.now().toString(36) + Math.random().toString(36).slice(2,7); }
+
+// ---------- Tasks ----------
+let tasks = loadJSON('sd_tasks', []);
+function renderTasks(){
+  const list = document.getElementById('taskList');
+  if(tasks.length===0){ list.innerHTML = '<div class="empty-state">No tasks yet — add your first one above.</div>'; return; }
+  list.innerHTML = tasks.map(t => `
+    <div class="task-item">
+      <div class="task-check ${t.done?'done':''}" onclick="toggleTask('${t.id}')">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="task-text ${t.done?'done':''}">${escapeHtml(t.text)}</div>
+      <div class="task-del" onclick="deleteTask('${t.id}')">×</div>
+    </div>
+  `).join('');
+}
+function addTask(){
+  const input = document.getElementById('taskInput');
+  const val = input.value.trim();
+  if(!val) return;
+  tasks.push({id:uid(), text:val, done:false});
+  saveJSON('sd_tasks', tasks);
+  input.value = '';
+  renderTasks();
+}
+function toggleTask(id){
+  const t = tasks.find(x=>x.id===id);
+  if(t){ t.done = !t.done; saveJSON('sd_tasks', tasks); renderTasks(); }
+}
+function deleteTask(id){
+  tasks = tasks.filter(x=>x.id!==id);
+  saveJSON('sd_tasks', tasks);
+  renderTasks();
+}
+document.getElementById('taskInput').addEventListener('keydown', e=>{ if(e.key==='Enter') addTask(); });
+function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
+
+// ---------- Notes ----------
+let notes = loadJSON('sd_notes', []);
+function renderNotes(){
+  const list = document.getElementById('noteList');
+  if(notes.length===0){ list.innerHTML = '<div class="empty-state">No notes yet.</div>'; return; }
+  list.innerHTML = notes.slice().reverse().map(n => `
+    <div class="note-item">
+      <div class="note-date">${n.date}</div>
+      <div>${escapeHtml(n.text)}</div>
+    </div>
+  `).join('');
+}
+function saveNote(){
+  const input = document.getElementById('noteInput');
+  const val = input.value.trim();
+  if(!val) return;
+  notes.push({id:uid(), text:val, date:new Date().toLocaleString()});
+  saveJSON('sd_notes', notes);
+  input.value = '';
+  renderNotes();
+}
+
+// ---------- Focus timer ----------
+let timerMinutes = 25;
+let timerSeconds = 0;
+let timerInterval = null;
+let timerRunning = false;
+function updateTimerDisplay(){
+  const m = String(timerMinutes).padStart(2,'0');
+  const s = String(timerSeconds).padStart(2,'0');
+  document.getElementById('timerDisplay').textContent = `${m}:${s}`;
+}
+function setTimerMode(min, el){
+  if(timerRunning) return;
+  document.querySelectorAll('.timer-mode').forEach(m=>m.classList.remove('active'));
+  el.classList.add('active');
+  timerMinutes = min; timerSeconds = 0;
+  updateTimerDisplay();
+}
+function toggleTimer(){
+  const btn = document.getElementById('timerStartBtn');
+  if(timerRunning){
+    clearInterval(timerInterval);
+    timerRunning = false;
+    btn.textContent = 'Start';
+  } else {
+    timerRunning = true;
+    btn.textContent = 'Pause';
+    timerInterval = setInterval(()=>{
+      if(timerSeconds===0){
+        if(timerMinutes===0){
+          clearInterval(timerInterval);
+          timerRunning = false;
+          btn.textContent = 'Start';
+          updateTimerDisplay();
+          alert("Time's up! Great work.");
+          return;
+        }
+        timerMinutes--; timerSeconds = 59;
+      } else {
+        timerSeconds--;
+      }
+      updateTimerDisplay();
+    }, 1000);
+  }
+}
+function resetTimer(){
+  clearInterval(timerInterval);
+  timerRunning = false;
+  document.getElementById('timerStartBtn').textContent = 'Start';
+  const activeMode = document.querySelector('.timer-mode.active');
+  timerMinutes = activeMode ? parseInt(activeMode.dataset.min) : 25;
+  timerSeconds = 0;
+  updateTimerDisplay();
+}
+
+// ---------- View switching ----------
+function switchView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+  document.querySelectorAll('nav.tabbar button').forEach(b=>b.classList.toggle('active', b.dataset.view===name));
+}
+
+// ---------- Settings / API key ----------
+function openSettings(){
+  document.getElementById('apiKeyInput').value = localStorage.getItem('sd_groq_key') || '';
+  document.getElementById('settingsModal').classList.add('open');
+}
+function closeSettings(){ document.getElementById('settingsModal').classList.remove('open'); }
+function saveApiKey(){
+  const key = document.getElementById('apiKeyInput').value.trim();
+  if(key){ localStorage.setItem('sd_groq_key', key); }
+  closeSettings();
+}
+
+// ---------- AI Assistant ----------
+let aiMode = 'Summarize';
+function setAiMode(mode, el){
+  aiMode = mode;
+  document.querySelectorAll('.ai-mode').forEach(m=>m.classList.remove('active'));
+  el.classList.add('active');
+}
+
+const modeInstructions = {
+  'Summarize': 'Summarize the following text in 3-5 clear bullet points, capturing only the key ideas.',
+  'To-do list': 'Turn the following text into a clean, actionable to-do list. Each item should start with a verb and be a single, clear action.',
+  'Draft email': 'Turn the following notes or topic into a polite, professional, concise email draft. Include a suitable subject line at the top.',
+  'Explain simply': 'Explain the following text in very simple, plain language, as if to someone with no background in the topic. Use short sentences and everyday words.'
+};
+
+async function askAI(){
+  const key = localStorage.getItem('sd_groq_key');
+  const output = document.getElementById('aiOutput');
+  const btn = document.getElementById('aiBtn');
+  const inputText = document.getElementById('aiInput').value.trim();
+
+  if(!key){
+    output.innerHTML = `<div class="ai-error"><b>No API key yet</b>Tap the ⚙ settings icon at the top to add your free Groq API key, then try again.</div>`;
+    openSettings();
+    return;
+  }
+  if(!inputText){
+    output.innerHTML = `<div class="ai-error"><b>Nothing to work with</b>Paste some text into the box above first.</div>`;
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = `<svg class="spin" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg> Thinking...`;
+  output.innerHTML = '';
+
+  const systemPrompt = `You are a helpful productivity assistant for students and office workers inside an app called StudyDesk. The user will choose a task mode and provide text. Task mode: "${aiMode}". Instruction for this mode: ${modeInstructions[aiMode]} Keep your response focused, well-formatted with line breaks where helpful, and no longer than necessary. Do not add unrelated commentary.`;
+
+  try{
+    const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + key
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: inputText }
+        ],
+        temperature: 0.6,
+        max_tokens: 500
+      })
+    });
+
+    const data = await response.json();
+
+    if(!response.ok){
+      const msg = data.error && data.error.message ? data.error.message : JSON.stringify(data);
+      output.innerHTML = `<div class="ai-error"><b>AI couldn't respond (${response.status})</b>${msg}</div>`;
+    } else {
+      const text = data.choices && data.choices[0] && data.choices[0].message.content
+        ? data.choices[0].message.content
+        : 'No response text was returned.';
+      output.innerHTML = `<div class="ai-response"><span class="tag">✦ ${aiMode}</span>${escapeHtml(text)}</div>`;
+    }
+  }catch(err){
+    output.innerHTML = `<div class="ai-error"><b>Network error</b>${err.message}. Check your connection and try again.</div>`;
+  }finally{
+    btn.disabled = false;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M3 12h18"/></svg> Ask AI Assistant`;
+  }
+}
+
+// ---------- Boot ----------
+renderTasks();
+renderNotes();
+updateTimerDisplay();
+if(!localStorage.getItem('sd_groq_key')){
+  setTimeout(openSettings, 600);
+}
+</script>
+</body>
+</html>
